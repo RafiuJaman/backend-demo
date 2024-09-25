@@ -52,6 +52,8 @@ export class FormService {
     const saved = await this.formRepository.update(id, {
       status: this.stringToClaimStatus(status),
     });
+
+    return saved.raw[0];
   }
 
   stringToClaimStatus = (status: string): ClaimStatus => {
