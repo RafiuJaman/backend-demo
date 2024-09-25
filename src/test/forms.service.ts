@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TestRepository } from './test.repository';
 import { Form } from './forms.entity';
-import { ClaimForm } from './interface';
+import { ClaimForm, ClaimStatus } from './interface';
 import { FormRepository } from './forms.repository';
 
 @Injectable()
@@ -39,4 +39,31 @@ export class FormService {
       throw e;
     }
   }
+
+  async updateFormStatus(id: number, status: string): Promise<Form> {
+    const form = this.formRepository.findOne({
+      where: { id },
+    });
+
+    if (!form) {
+      throw new Error('Form not found');
+    }
+
+    const saved = await this.formRepository.update(id, {
+      status: this.stringToClaimStatus(status),
+    });
+  }
+
+  stringToClaimStatus = (status: string): ClaimStatus => {
+    switch (status) {
+      case 'PENDING':
+        return ClaimStatus.PENDING;
+      case 'APPROVED':
+        return ClaimStatus.APPROVED;
+      case 'REJECTED':
+        return ClaimStatus.REJECTED;
+      default:
+        throw new Error('Invalid status');
+    }
+  };
 }

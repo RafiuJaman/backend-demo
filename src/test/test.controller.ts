@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { TestService } from './test.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ClaimForm } from './interface';
@@ -28,5 +28,13 @@ export class TestsController {
   @Get('getForms')
   async getForms(): Promise<Form[]> {
     return this.formService.getForms();
+  }
+
+  @Patch('updateForm/:id/:status') // Use ':id' and ':status' as route parameters
+  async updateFormStatus(
+    @Param('id') id: string, // Get 'id' as a string initially
+    @Param('status') status: string, // Get 'status' as a string
+  ): Promise<Form> {
+    return this.formService.updateFormStatus(parseInt(id), status); // Parse 'id' to an integer
   }
 }
